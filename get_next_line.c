@@ -1,0 +1,144 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saperez- <saperez-@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/26 14:49:51 by saperez-          #+#    #+#             */
+/*   Updated: 2026/06/04 12:48:44 by saperez-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line.h"
+#include <stdlib.h>
+
+char	*ft_free_strjoin(char *save, char *tmp)
+{
+	char	*new;
+
+	new = ft_strjoin(save, tmp);
+	free(save);
+	save = NULL;
+	if (!new)
+		return (NULL);
+	return (new);
+}
+
+char	*the_rest(char *save)
+{
+	int		i;
+	int		n;
+	char	*new_save;
+
+	i = 0;
+	while (save[i] != '\0' && save[i] != '\n')
+		i++;
+	if (save[i] == '\0')
+		return (free(save), save = NULL, NULL);
+	new_save = ft_calloc(ft_strlen(save) - i, sizeof(char));
+	if (!new_save)
+		return (free(save), save = NULL, NULL);
+	i++;
+	n = 0;
+	while (save[i] != '\0')
+		new_save[n++] = save[i++];
+	return (free(save), save = NULL, new_save);
+}
+
+char	*make_line_from(char *save)
+{
+	int		i;
+	char	*line;
+
+	i = 0;
+	if (!save)
+		return (NULL);
+	if (save[i] == '\0')
+		return (NULL);
+	while (save[i] != '\0' && save[i] != '\n')
+		i++;
+	line = ft_calloc(sizeof(char), (i + 2));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (save[i] != '\0' && save[i] != '\n')
+	{
+		line[i] = save[i];
+		i++;
+	}
+	if (save[i] == '\n')
+		line[i++] = '\n';
+	line[i] = '\0';
+	return (line);
+}
+
+char	*read_until_enter(int fd, char *save)
+{
+	int		n_of_chars;
+	char	*tmp;
+
+	if (!save)
+		save = ft_calloc(1, 1);
+	if (!save)
+		return (NULL);
+	tmp = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
+	if (!tmp)
+		return (NULL);
+	n_of_chars = 1;
+	while (n_of_chars > 0)
+	{
+		n_of_chars = read(fd, tmp, BUFFER_SIZE);
+		if (n_of_chars < 0)
+			return (free(tmp), tmp = NULL, free(save), save = NULL, NULL);
+		tmp[n_of_chars] = '\0';
+		save = ft_free_strjoin(save, tmp);
+		if (!save)
+			return (free(tmp), tmp = NULL, NULL);
+		if (ft_strchr(save, '\n'))
+			break ;
+	}
+	return (free(tmp), save);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*line;
+	static char	*save;
+
+	if (fd < 0 || fd > 1023 || BUFFER_SIZE <= 0)
+		return (NULL);
+	save = read_until_enter(fd, save);
+	if (save == NULL)
+		return (free(save),save = NULL ,NULL);
+	line = make_line_from(save);
+	if (line == NULL)
+	{
+		free(save);
+		save = NULL;
+		return (NULL);
+	}
+	save = the_rest(save);
+	return (line);
+}
+
+#include <fcntl.h>
+#include <stdio.h>
+
+// int	main (int argc, char **argv)
+// {
+// 	int fd = open(argv[1], O_RDONLY);
+// 	char *line = get_next_line(fd);
+// 	int i = 0;
+// 		while (line)
+// 		{
+// 			printf("%s", line);
+// 			free(line);
+// 			line = get_next_line(fd);
+// 			i++;
+// 		}
+// 		free(line);
+// 		line  = NULL;
+// 		close(fd);
+// 		return (0);
+// }
