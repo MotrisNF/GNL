@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line bonus.h                              :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: saperez- <saperez-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 14:50:27 by saperez-          #+#    #+#             */
-/*   Updated: 2026/05/29 09:25:30 by saperez-         ###   ########.fr       */
+/*   Updated: 2026/06/17 11:29:44 by saperez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_BONUS_H
-# define GET_NEXT_LINE_BONUS_H
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 2
 # endif
 
 # include <unistd.h>
@@ -28,4 +28,5 @@ unsigned long int	ft_strlen(char *s);
 char				*ft_strjoin(char *s1, char *s2);
 char				*ft_strchr(char *save, int character);
 void				*ft_calloc(unsigned long int size, unsigned long int c);
+char				*ft_free_all(char **save, char **line, char **tmp);
 #endif
